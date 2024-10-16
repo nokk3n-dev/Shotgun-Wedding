@@ -10,7 +10,14 @@ public class PlayerMovement : MonoBehaviour
 
     private float xVelocity = 0;
 
-    [SerializeField] float fianceMoveSpeed = 3f;
+    [SerializeField] float fianceMoveSpeed = 3.7f;
+    [SerializeField] float fianceReach = 5f;
+
+    // Reference to the HealthManager
+    private HealthManager healthManager;
+
+    // Reference to the FIL
+    private Transform FIL_Hitbox;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +25,12 @@ public class PlayerMovement : MonoBehaviour
         fianceBody = GetComponent<Rigidbody2D>();
         fianceAnim = GetComponent<Animator>();
         fianceSprite = GetComponent<SpriteRenderer>();
+
+        // Find the HealthManager
+        healthManager = GameObject.FindObjectOfType<HealthManager>();
+
+        // Find the Father in Law's hitbox
+        FIL_Hitbox = GameObject.FindGameObjectWithTag("FIL").transform;
     }
 
     // Update is called once per frame
@@ -32,12 +45,18 @@ public class PlayerMovement : MonoBehaviour
             fianceAnim.SetBool("throwingJab", true);
             fianceAnim.SetBool("throwingCross", false);
             fianceAnim.SetBool("blocking", false);
+
+            // This will be called during a specific frame in the animation
+            //JabFIL();
         } 
         else if (Input.GetButtonDown("Cross") && xVelocity == 0f)
         {
             fianceAnim.SetBool("throwingCross", true);
             fianceAnim.SetBool("throwingJab", false);
             fianceAnim.SetBool("blocking", false);
+
+            // This will be called during a specific frame in the animation
+            //CrossFIL();
         }
         else if (Input.GetButton("Block") && xVelocity == 0f)
         {
@@ -80,10 +99,24 @@ public class PlayerMovement : MonoBehaviour
         fianceAnim.SetBool("throwingCross", false);
     }   // End Stop Punch
 
-    // Call this at the end of the jab/cross animation to check if you hit the enemy
-    private void DamageCheck()
+    private void JabFIL()
     {
+        float distanceToFIL = Vector2.Distance(transform.position, FIL_Hitbox.position);
+        
+        if (distanceToFIL <= fianceReach)
+        {
+            healthManager.FILTakeDamage(5);
+        }
+    }
 
+    private void CrossFIL()
+    {
+        float distanceToFIL = Vector2.Distance(transform.position, FIL_Hitbox.position);
+        
+        if (distanceToFIL <= fianceReach)
+        {
+            healthManager.FILTakeDamage(10);
+        }
     }
 
 }   // End class
