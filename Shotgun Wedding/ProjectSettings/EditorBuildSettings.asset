@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Main Menu.unity
+    guid: b0a748e77c7138449bcee6a0c85ecf67
+  - enabled: 1
+    path: Assets/Scenes/Bar Fight.unity
+    guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Wedding Fight.unity
+    guid: fb6403b21385fdb4faae1c55231ef2a9
+  - enabled: 1
+    path: Assets/Scenes/Win.unity
+    guid: b4372c825ef2c3c4996cc8b44577f25c
+  - enabled: 1
+    path: Assets/Scenes/Lose.unity
+    guid: 53d6be8a70495ec41895db021de94eb9
+  - enabled: 1
+    path: Assets/Scenes/Settings.unity
+    guid: 4f60830874b6f174992b2638fc673321
+  m_configObjects: {}
