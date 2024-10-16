@@ -5,6 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class StartMenu : MonoBehaviour
 {
+    void Start()
+    {
+        if (PlayerPrefs.HasKey("musicVolume"))
+        {
+            AudioListener.volume = PlayerPrefs.GetFloat("musicVolume");
+        }
+    }
     public void StartGame()
     {
         // Load Level 1
