@@ -70,10 +70,10 @@ public class FIL_Fight_Logic : MonoBehaviour
             {
                 Cross();
             }
-            else if (fianceDistance <= 4)
+            else if (fianceDistance <= 5)
             {
                 Block();
-            }
+            } 
             else if (fianceDistance <= 6)
             {
                 Jab();
