@@ -6,12 +6,13 @@ public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D fianceBody;
     private Animator fianceAnim;
+    private Animator FILAnim;
     private SpriteRenderer fianceSprite;
 
     private float xVelocity = 0;
 
-    [SerializeField] float fianceMoveSpeed = 3.7f;
-    [SerializeField] float fianceReach = 5f;
+    [SerializeField] float fianceMoveSpeed = 4f;
+    [SerializeField] float fianceReach = 3.7f;
 
     // Reference to the HealthManager
     private HealthManager healthManager;
@@ -29,13 +30,19 @@ public class PlayerMovement : MonoBehaviour
         // Find the HealthManager
         healthManager = GameObject.FindObjectOfType<HealthManager>();
 
-        // Find the Father in Law's hitbox
+        // Set up the FIL
+        FILAnim = GameObject.FindGameObjectWithTag("FIL").GetComponent<Animator>();
         FIL_Hitbox = GameObject.FindGameObjectWithTag("FIL").transform;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (PauseMenu.GameIsPaused)
+        {
+            return;
+        }
+
         xVelocity = Input.GetAxisRaw("Horizontal");
         fianceBody.velocity = new Vector2(xVelocity * fianceMoveSpeed, fianceBody.velocity.y);
 
@@ -103,9 +110,9 @@ public class PlayerMovement : MonoBehaviour
     {
         float distanceToFIL = Vector2.Distance(transform.position, FIL_Hitbox.position);
         
-        if (distanceToFIL <= fianceReach)
+        if (distanceToFIL <= fianceReach && !FILAnim.GetBool("FIL_blocking"))
         {
-            healthManager.FILTakeDamage(5);
+            healthManager.FILTakeDamage(10);
         }
     }
 
@@ -115,7 +122,14 @@ public class PlayerMovement : MonoBehaviour
         
         if (distanceToFIL <= fianceReach)
         {
-            healthManager.FILTakeDamage(10);
+            if (FILAnim.GetBool("FIL_blocking"))
+            {
+                healthManager.FILTakeDamage(5);
+            }
+            else 
+            {
+                healthManager.FILTakeDamage(20);
+            }
         }
     }
 
