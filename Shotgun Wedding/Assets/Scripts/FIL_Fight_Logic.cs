@@ -8,7 +8,11 @@ public class FIL_Fight_Logic : MonoBehaviour
     private Animator FILAnim;
     private Animator fianceAnim;
 
-    private float xVelocity = 0;
+    // This will help me stop the FIL from jabbing non-stop
+    private bool canJab = true;
+    private bool canCross = true;
+    private float jabCooldown = 0.5f;
+    private float crossCooldown = 1f;
 
     [SerializeField] float FILMoveSpeed = 3f;
     [SerializeField] float FILReach = 4f;
@@ -37,30 +41,47 @@ public class FIL_Fight_Logic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (PauseMenu.GameIsPaused)
+        {
+            return;
+        }
+
         float fianceDistance = Vector2.Distance(transform.position, Fiance_Hitbox.position);
         
+        if (fianceDistance > 10)
+        {
+            moveForward();
+        }
+
+        // Stopping the movement
+        if (fianceDistance <= 10)
+        {
+            FILBody.velocity = Vector2.zero;
+            FILAnim.SetBool("FIL_moveForward", false);
+        }
+
         // IMPORTANT THIS IS ONLY THE ANIMATION
         // The actual damage is dealt by the {punch}CheckDamage function
         // which is called by the animator on the impact frame
-        if (fianceDistance <= 3)
+        // Only throw punches or idle if not moving
+        if (!fianceAnim.GetBool("FIL_moveForward") && !fianceAnim.GetBool("FIL_moveBack"))
         {
-            Block();
-        }
-        else if (fianceDistance <= 5)
-        {
-            Cross();
-        }
-        else if (fianceDistance <= 7)
-        {
-            Jab();
-        }
-        else if (fianceDistance > 7)
-        {
-            moveForward(5);
-        }
-        else
-        {
-            Idle();
+            if (fianceDistance < 3.5)
+            {
+                Cross();
+            }
+            else if (fianceDistance <= 4)
+            {
+                Block();
+            }
+            else if (fianceDistance <= 6)
+            {
+                Jab();
+            }
+            else
+            {
+                Idle();
+            }
         }
     }
 
@@ -98,12 +119,42 @@ public class FIL_Fight_Logic : MonoBehaviour
         FILAnim.SetBool("FIL_blocking", false);
     }
 
+    // Fix Later
+    // public void StartJabCooldown()
+    // {
+    //     // Set the cooldown timer of the jab
+    //     StartCoroutine(JabTimer());
+    // }
+
+    // // Jab Cooldown
+    // IEnumerator JabTimer()
+    // {
+    //     canJab = false;
+    //     yield return new WaitForSeconds(jabCooldown);
+    //     canJab = true;
+    // }
+
     private void Cross()
     {
         FILAnim.SetBool("FIL_throwingCross", true);
         FILAnim.SetBool("FIL_throwingJab", false);
         FILAnim.SetBool("FIL_blocking", false);
     }
+
+    // Fix later
+    // public void StartCrossCooldown()
+    // {
+    //     // Set the cooldown timer of the jab
+    //     StartCoroutine(CrossTimer());
+    // }
+
+    // // Jab Cooldown
+    // IEnumerator CrossTimer()
+    // {
+    //     canCross = false;
+    //     yield return new WaitForSeconds(crossCooldown);
+    //     canCross = true;
+    // }
 
     private void Block()
     {
@@ -121,19 +172,15 @@ public class FIL_Fight_Logic : MonoBehaviour
         FILAnim.SetBool("FIL_moveBack", false);
     }
 
-    private void moveForward(float distance)
+    private void moveForward()
     {
-        // Stop all actions
-        Idle();
-
-        // Get current location
-        Vector2 startPosition = transform.position;
-        Vector2 currentPosition = transform.position;
-
         FILAnim.SetBool("FIL_moveForward", true);
-        while (Vector2.Distance(startPosition, currentPosition) <= distance)
-        {
-            FILBody.velocity = new Vector2(FILMoveSpeed, FILBody.velocity.y);
-        }
+        FILBody.velocity = new Vector2(-FILMoveSpeed, FILBody.velocity.y);
+    }
+
+    private void moveBackward()
+    {
+        FILAnim.SetBool("FIL_moveBack", true);
+        FILBody.velocity = new Vector2(FILMoveSpeed, FILBody.velocity.y);
     }
 }

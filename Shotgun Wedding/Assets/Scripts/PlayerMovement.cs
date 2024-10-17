@@ -38,6 +38,11 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (PauseMenu.GameIsPaused)
+        {
+            return;
+        }
+
         xVelocity = Input.GetAxisRaw("Horizontal");
         fianceBody.velocity = new Vector2(xVelocity * fianceMoveSpeed, fianceBody.velocity.y);
 
