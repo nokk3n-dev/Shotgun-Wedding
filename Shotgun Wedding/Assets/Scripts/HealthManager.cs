@@ -58,12 +58,18 @@ public class HealthManager : MonoBehaviour
 
     private void Lose()
     {
-        // Load Lose screen page (index 4)
-        SceneManager.LoadScene(4); 
+        // Set the savedLevel to the Bar Fight
+        PlayerPrefs.SetInt("savedLevel", 2);
+
+        // Load Lose screen page
+        SceneManager.LoadScene("Lose"); 
     }
 
     private void Win()
     {
+        // Increment the saved level
+        PlayerPrefs.SetInt("savedLevel", PlayerPrefs.GetInt("savedLevel") + 1);
+
         // Load the win screen
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }

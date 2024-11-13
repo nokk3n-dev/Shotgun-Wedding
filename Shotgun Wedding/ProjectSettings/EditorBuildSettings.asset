@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: b0a748e77c7138449bcee6a0c85ecf67
   - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: 9e8e6cd18c9184d42b552c09b14ed155
+  - enabled: 1
     path: Assets/Scenes/Bar Fight.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
@@ -16,10 +19,10 @@ EditorBuildSettings:
     guid: fb6403b21385fdb4faae1c55231ef2a9
   - enabled: 1
     path: Assets/Scenes/Win.unity
-    guid: b4372c825ef2c3c4996cc8b44577f25c
+    guid: c9f2656fbfabf9842b1db5d3a3f1d47a
   - enabled: 1
     path: Assets/Scenes/Lose.unity
-    guid: 53d6be8a70495ec41895db021de94eb9
+    guid: 40f51f3cd1581904cbcabc4f933f1f4c
   - enabled: 1
     path: Assets/Scenes/Settings.unity
     guid: 4f60830874b6f174992b2638fc673321
