@@ -75,4 +75,10 @@ public class StartMenu : MonoBehaviour
         // Load Level 1
         SceneManager.LoadScene("Bar Fight");
     }
+
+    public void ResetGame()
+    {
+        PlayerPrefs.DeleteAll();
+        SceneManager.LoadScene("Main Menu");
+    }
 }

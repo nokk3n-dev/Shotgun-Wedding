@@ -11,8 +11,38 @@ public class PlayerMovement : MonoBehaviour
 
     private float xVelocity = 0;
 
-    [SerializeField] float fianceMoveSpeed = 4f;
-    [SerializeField] float fianceReach = 3.7f;
+    /************************************************************
+     * Fiance Fight Statistics
+     ************************************************************
+     * fianceMoveSpeed - This controls how fast the fiance moves
+     * left and right
+     ************************************************************
+     * fianceReach - This controls how close the fiance has to 
+     * be in order for the punch to hit
+     ************************************************************
+     * fianceJabDamage - This controls how much damage the jab
+     * will do
+     ************************************************************
+     * fianceBlockDamage - This controls how much damage the
+     * cross will do if the FIL is blocking
+     ************************************************************
+     * fianceCrossDamage - This controls how much damage the 
+     * cross will do
+     ************************************************************
+     * rumPowerUpMultiplier - This controls the damage multiplier
+     * for the rum power up
+     ************************************************************
+     * damageMultiplier - This should always be set to 1, unless
+     * the fiance picked up a powerup like the 151 rum which will
+     * cause him to do more damage
+     ************************************************************/
+    private float fianceMoveSpeed = 4f;
+    private float fianceReach = 3.7f;
+    private float fianceJabDamage = 5.0f;
+    private float fianceBlockDamage = 5.0f;
+    private float fianceCrossDamage = 10.0f;
+    private float rumPowerUpMultiplier = 1.5f;
+    private float damageMultiplier = 1.0f;
 
     // Reference to the HealthManager
     private HealthManager healthManager;
@@ -112,7 +142,8 @@ public class PlayerMovement : MonoBehaviour
         
         if (distanceToFIL <= fianceReach && !FILAnim.GetBool("FIL_blocking"))
         {
-            healthManager.FILTakeDamage(10);
+            Debug.Log("Fiance Deals " + fianceJabDamage*damageMultiplier + " damage");
+            healthManager.FILTakeDamage(fianceJabDamage * damageMultiplier);
         }
     }
 
@@ -124,13 +155,47 @@ public class PlayerMovement : MonoBehaviour
         {
             if (FILAnim.GetBool("FIL_blocking"))
             {
-                healthManager.FILTakeDamage(5);
+                Debug.Log("Fiance Deals " + fianceBlockDamage*damageMultiplier + " damage");
+                healthManager.FILTakeDamage(fianceBlockDamage * damageMultiplier);
             }
             else 
             {
-                healthManager.FILTakeDamage(20);
+                Debug.Log("Fiance Deals " + fianceCrossDamage*damageMultiplier + " damage");
+                healthManager.FILTakeDamage(fianceCrossDamage * damageMultiplier);
             }
         }
+    }
+
+    /************************************************************
+     * ActivateRumPowerUp
+     ************************************************************
+     * Description: This function will return change the Fiance's
+     * damage multiplier to the rumPowerUpMultiplier. Which is
+     * around (depending on if I changed it recently)
+     ************************************************************
+     * Parameters: None
+     ************************************************************
+     * Returns: None
+     ************************************************************/
+    public void ActivateRumPowerUp()
+    {
+        damageMultiplier = rumPowerUpMultiplier;
+        Debug.Log("Rum Power Up Activated! Damage Multiplier = " + damageMultiplier);
+    }
+
+    /************************************************************
+     * ResetDamageMultiplier
+     ************************************************************
+     * Description: This function will return the Fiance's
+     * damage multiplier back to normal
+     ************************************************************
+     * Parameters: None
+     ************************************************************
+     * Returns: None
+     ************************************************************/
+    public void ResetDamageMultiplier()
+    {
+        damageMultiplier = 1.0f;
     }
 
 }   // End class
