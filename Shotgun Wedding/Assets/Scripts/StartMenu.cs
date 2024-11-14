@@ -69,11 +69,8 @@ public class StartMenu : MonoBehaviour
 
     public void Retry()
     {
-        // Reset the progress back to the bar fight
-        PlayerPrefs.SetInt("savedLevel", 2);
-
-        // Load Level 1
-        SceneManager.LoadScene("Bar Fight");
+        // Load the level
+        SceneManager.LoadScene(PlayerPrefs.GetInt("savedLevel"));
     }
 
     public void ResetGame()

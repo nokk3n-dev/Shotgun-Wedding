@@ -187,7 +187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &163230078
 Transform:
   m_ObjectHideFlags: 0
@@ -197,7 +197,7 @@ Transform:
   m_GameObject: {fileID: 163230077}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -508.52, y: -199.14, z: -3.2016423}
+  m_LocalPosition: {x: -505.73, y: -199.14, z: -3.2016423}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2056,8 +2056,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fianceHealthBar: {fileID: 847976073}
   FILHealthBar: {fileID: 1170781532}
-  fianceCurrentHeath: 100
-  FILCurrentHeath: 100
+  CoconutPowerUp: {fileID: 163230077}
+  RumPowerUp: {fileID: 1948703712}
 --- !u!4 &820261302
 Transform:
   m_ObjectHideFlags: 0
@@ -3674,7 +3674,7 @@ Transform:
   m_GameObject: {fileID: 1948703712}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -508.47, y: -198.9, z: -3.2016423}
+  m_LocalPosition: {x: -506.54, y: -198.9, z: -3.2016423}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

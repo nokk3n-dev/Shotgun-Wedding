@@ -150,7 +150,7 @@ RectTransform:
   m_GameObject: {fileID: 97887684}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.80908, y: 0.80908, z: 0.80908}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2004098240}
@@ -164,8 +164,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 412, y: -26}
-  m_SizeDelta: {x: -871.915, y: -364.383}
+  m_AnchoredPosition: {x: 412, y: -34.985}
+  m_SizeDelta: {x: -871.915, y: -555.38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &97887686
 MonoBehaviour:
@@ -2343,11 +2343,16 @@ MonoBehaviour:
 
 
     The Coconut Power Up will reduce damage taken
-    by 50%
+    by 50%. It will spawn if you fall below half health first
 
 
-    The 151 Power Up will increase damage by 50% and reduce damage taken
-    25%'
+    The Rum Power
+    Up will increase damage by 50% and reduce damage taken 25%. It will spawn if
+    the enemy falls below half health first
+
+
+    Only one power up will spawn per
+    round'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
@@ -2374,8 +2379,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45
-  m_fontSizeBase: 45
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2740,8 +2745,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fianceHealthBar: {fileID: 847976073}
   FILHealthBar: {fileID: 1170781532}
-  fianceCurrentHeath: 100
-  FILCurrentHeath: 100
+  CoconutPowerUp: {fileID: 0}
+  RumPowerUp: {fileID: 0}
 --- !u!4 &820261302
 Transform:
   m_ObjectHideFlags: 0

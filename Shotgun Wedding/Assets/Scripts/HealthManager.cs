@@ -8,14 +8,19 @@ public class HealthManager : MonoBehaviour
 {
     [SerializeField] public Image fianceHealthBar;
     [SerializeField] public Image FILHealthBar;
+    [SerializeField] public GameObject CoconutPowerUp;
+    [SerializeField] public GameObject RumPowerUp;
 
-    public float fianceCurrentHeath = 100f;
-    public float FILCurrentHeath = 100f;
+    private float fianceCurrentHeath = 100f;
+    private float FILCurrentHeath = 100f;
+    
+    bool powerUpSpawned = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        CoconutPowerUp?.SetActive(false);
+        RumPowerUp?.SetActive(false);
     }
 
     // Update is called once per frame
@@ -37,6 +42,7 @@ public class HealthManager : MonoBehaviour
         {
             // Fill the healthbar to the % of current health
             fianceHealthBar.fillAmount = fianceCurrentHeath / 100f;
+            CheckPowerUpSpawnCondition();
         }
     }
 
@@ -53,13 +59,17 @@ public class HealthManager : MonoBehaviour
         {
             // Fill the healthbar to the % of current health
             FILHealthBar.fillAmount = FILCurrentHeath / 100f;
+            CheckPowerUpSpawnCondition();
         }
     }
 
     private void Lose()
     {
-        // Set the savedLevel to the Bar Fight
-        PlayerPrefs.SetInt("savedLevel", 2);
+        if (SceneManager.GetActiveScene().name != "Tutorial")
+        {
+            // Set the savedLevel to the Bar Fight
+            PlayerPrefs.SetInt("savedLevel", 2);
+        }
 
         // Load Lose screen page
         SceneManager.LoadScene("Lose"); 
@@ -72,5 +82,22 @@ public class HealthManager : MonoBehaviour
 
         // Load the win screen
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    private void CheckPowerUpSpawnCondition()
+    {
+        if (!powerUpSpawned)
+        {
+            if (fianceCurrentHeath <= 50f)
+            {
+                CoconutPowerUp?.SetActive(true);
+                powerUpSpawned = true;
+            }
+            else if (FILCurrentHeath <= 50f)
+            {
+                RumPowerUp?.SetActive(true);
+                powerUpSpawned = true;
+            }
+        }
     }
 }
