@@ -153,6 +153,10 @@ public class FIL_Fight_Logic : MonoBehaviour
 
         if (distanceToFiance <= FILReach && !fianceAnim.GetBool("blocking"))
         {
+            if (!fianceAnim.GetBool("blocking"))
+            {
+                fianceAnim.SetTrigger("impact");
+            }
             Debug.Log("FIL Deals " + FILJabDamage * currentDamageMultiplier + " damage");
             healthManager.FianceTakeDamage(FILJabDamage * currentDamageMultiplier);
         }
@@ -172,6 +176,7 @@ public class FIL_Fight_Logic : MonoBehaviour
             else 
             {
                 Debug.Log("FIL Deals " + FILCrossDamage * currentDamageMultiplier + " damage");
+                fianceAnim.SetTrigger("impact");
                 healthManager.FianceTakeDamage(FILCrossDamage * currentDamageMultiplier);
             }
         }

@@ -142,6 +142,10 @@ public class PlayerMovement : MonoBehaviour
         
         if (distanceToFIL <= fianceReach && !FILAnim.GetBool("FIL_blocking"))
         {
+            if (!FILAnim.GetBool("FIL_blocking"))
+            {
+                FILAnim.SetTrigger("FIL_impact");
+            }
             Debug.Log("Fiance Deals " + fianceJabDamage*damageMultiplier + " damage");
             healthManager.FILTakeDamage(fianceJabDamage * damageMultiplier);
         }
@@ -161,6 +165,7 @@ public class PlayerMovement : MonoBehaviour
             else 
             {
                 Debug.Log("Fiance Deals " + fianceCrossDamage*damageMultiplier + " damage");
+                FILAnim.SetTrigger("FIL_impact");
                 healthManager.FILTakeDamage(fianceCrossDamage * damageMultiplier);
             }
         }
