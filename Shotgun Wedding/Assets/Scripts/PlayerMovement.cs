@@ -38,9 +38,9 @@ public class PlayerMovement : MonoBehaviour
      ************************************************************/
     private float fianceMoveSpeed = 4f;
     private float fianceReach = 3.7f;
-    private float fianceJabDamage = 5.0f;
-    private float fianceBlockDamage = 5.0f;
-    private float fianceCrossDamage = 10.0f;
+    private float fianceJabDamage = 2.5f;
+    private float fianceBlockDamage = 2.5f;
+    private float fianceCrossDamage = 5.0f;
     private float rumPowerUpMultiplier = 1.5f;
     private float damageMultiplier = 1.0f;
 
@@ -146,7 +146,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 FILAnim.SetTrigger("FIL_impact");
             }
-            Debug.Log("Fiance Deals " + fianceJabDamage*damageMultiplier + " damage");
+            //Debug.Log("Fiance Deals " + fianceJabDamage*damageMultiplier + " damage");
             healthManager.FILTakeDamage(fianceJabDamage * damageMultiplier);
         }
     }
@@ -159,12 +159,13 @@ public class PlayerMovement : MonoBehaviour
         {
             if (FILAnim.GetBool("FIL_blocking"))
             {
-                Debug.Log("Fiance Deals " + fianceBlockDamage*damageMultiplier + " damage");
+                //Debug.Log("Fiance Deals " + fianceBlockDamage*damageMultiplier + " damage");
+                FILAnim.SetTrigger("FIL_blockImpact");
                 healthManager.FILTakeDamage(fianceBlockDamage * damageMultiplier);
             }
             else 
             {
-                Debug.Log("Fiance Deals " + fianceCrossDamage*damageMultiplier + " damage");
+                //Debug.Log("Fiance Deals " + fianceCrossDamage*damageMultiplier + " damage");
                 FILAnim.SetTrigger("FIL_impact");
                 healthManager.FILTakeDamage(fianceCrossDamage * damageMultiplier);
             }
@@ -185,7 +186,7 @@ public class PlayerMovement : MonoBehaviour
     public void ActivateRumPowerUp()
     {
         damageMultiplier = rumPowerUpMultiplier;
-        Debug.Log("Rum Power Up Activated! Damage Multiplier = " + damageMultiplier);
+        //Debug.Log("Rum Power Up Activated! Damage Multiplier = " + damageMultiplier);
     }
 
     /************************************************************

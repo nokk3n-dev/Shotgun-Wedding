@@ -6,6 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class FIL_Fight_Logic : MonoBehaviour
 {
+    // Define state machine for FIL's behavior
+    private enum FILState { Idle, Approaching, Attacking, Retreating };
+    private FILState currentState;
+    private float stateStartTime;
+
     private Rigidbody2D FILBody;
     private Animator FILAnim;
     private Animator fianceAnim;
@@ -40,9 +45,9 @@ public class FIL_Fight_Logic : MonoBehaviour
      ************************************************************/
     private float FILMoveSpeed = 3f;
     private float FILReach = 4f;
-    private float FILJabDamage = 15f;
+    private float FILJabDamage = 5f;
     private float FILBlockDamage = 5f;
-    private float FILCrossDamage = 25f;
+    private float FILCrossDamage = 15f;
     private float currentDamageMultiplier = 1f;
 
     /************************************************************
@@ -98,6 +103,9 @@ public class FIL_Fight_Logic : MonoBehaviour
         // Set up Fiance
         fianceAnim = GameObject.FindGameObjectWithTag("Fiance").GetComponent<Animator>();
         Fiance_Hitbox = GameObject.FindGameObjectWithTag("Fiance").transform;
+
+        currentState = FILState.Attacking;
+        stateStartTime = Time.time;
     }
 
     // Update is called once per frame
@@ -110,40 +118,17 @@ public class FIL_Fight_Logic : MonoBehaviour
 
         float fianceDistance = Vector2.Distance(transform.position, Fiance_Hitbox.position);
         
-        if (fianceDistance > 10)
+        if (healthManager.GetFILHealth() <= 25)
         {
-            moveForward();
+            FinalStand(fianceDistance);
         }
-
-        // Stopping the movement
-        if (fianceDistance <= 10)
+        else if (healthManager.GetFILHealth() <= 50)
         {
-            FILBody.velocity = Vector2.zero;
-            FILAnim.SetBool("FIL_moveForward", false);
-        }
-
-        // IMPORTANT THIS IS ONLY THE ANIMATION
-        // The actual damage is dealt by the {punch}CheckDamage function
-        // which is called by the animator on the impact frame
-        // Only throw punches or idle if not moving
-        if (!fianceAnim.GetBool("FIL_moveForward") && !fianceAnim.GetBool("FIL_moveBack"))
+            AdvancedFighting(fianceDistance);
+        } 
+        else 
         {
-            if (fianceDistance < 3.5)
-            {
-                Cross();
-            }
-            else if (fianceDistance <= 5)
-            {
-                Block();
-            } 
-            else if (fianceDistance <= 6)
-            {
-                Jab();
-            }
-            else
-            {
-                Idle();
-            }
+            BasicFighting(fianceDistance);
         }
     }
 
@@ -157,7 +142,7 @@ public class FIL_Fight_Logic : MonoBehaviour
             {
                 fianceAnim.SetTrigger("impact");
             }
-            Debug.Log("FIL Deals " + FILJabDamage * currentDamageMultiplier + " damage");
+            //Debug.Log("FIL Deals " + FILJabDamage * currentDamageMultiplier + " damage");
             healthManager.FianceTakeDamage(FILJabDamage * currentDamageMultiplier);
         }
     }   // End JabDamageCheck
@@ -170,12 +155,13 @@ public class FIL_Fight_Logic : MonoBehaviour
         {
             if (fianceAnim.GetBool("blocking"))
             {
-                Debug.Log("FIL Deals " + FILBlockDamage * currentDamageMultiplier + " damage");
+                //Debug.Log("FIL Deals " + FILBlockDamage * currentDamageMultiplier + " damage");
+                fianceAnim.SetTrigger("blockImpact");
                 healthManager.FianceTakeDamage(FILBlockDamage * currentDamageMultiplier);
             }
             else 
             {
-                Debug.Log("FIL Deals " + FILCrossDamage * currentDamageMultiplier + " damage");
+                //Debug.Log("FIL Deals " + FILCrossDamage * currentDamageMultiplier + " damage");
                 fianceAnim.SetTrigger("impact");
                 healthManager.FianceTakeDamage(FILCrossDamage * currentDamageMultiplier);
             }
@@ -184,59 +170,40 @@ public class FIL_Fight_Logic : MonoBehaviour
 
     private void Jab()
     {
+        Idle();
         FILAnim.SetBool("FIL_throwingJab", true);
-        FILAnim.SetBool("FIL_throwingCross", false);
-        FILAnim.SetBool("FIL_blocking", false);
     }
-
-    // Fix Later
-    // public void StartJabCooldown()
-    // {
-    //     // Set the cooldown timer of the jab
-    //     StartCoroutine(JabTimer());
-    // }
-
-    // // Jab Cooldown
-    // IEnumerator JabTimer()
-    // {
-    //     canJab = false;
-    //     yield return new WaitForSeconds(jabCooldown);
-    //     canJab = true;
-    // }
 
     private void Cross()
     {
+        Idle();
         FILAnim.SetBool("FIL_throwingCross", true);
-        FILAnim.SetBool("FIL_throwingJab", false);
-        FILAnim.SetBool("FIL_blocking", false);
     }
 
-    // Fix later
-    // public void StartCrossCooldown()
-    // {
-    //     // Set the cooldown timer of the jab
-    //     StartCoroutine(CrossTimer());
-    // }
+    private void JabCross()
+    {
+        Idle();
+        FILAnim.SetBool("FIL_throwingJabCross", true);
+    }
 
-    // // Jab Cooldown
-    // IEnumerator CrossTimer()
-    // {
-    //     canCross = false;
-    //     yield return new WaitForSeconds(crossCooldown);
-    //     canCross = true;
-    // }
+    private void CrossJab()
+    {
+        Idle();
+        FILAnim.SetBool("FIL_throwingCrossJab", true);
+    }
 
     private void Block()
     {
+        Idle();
         FILAnim.SetBool("FIL_blocking", true);
-        FILAnim.SetBool("FIL_throwingCross", false);
-        FILAnim.SetBool("FIL_throwingJab", false);
     }
 
     private void Idle()
     {
         FILAnim.SetBool("FIL_throwingJab", false);
         FILAnim.SetBool("FIL_throwingCross", false);
+        FILAnim.SetBool("FIL_throwingCrossJab", false);
+        FILAnim.SetBool("FIL_throwingJabCross", false);
         FILAnim.SetBool("FIL_blocking", false);
         FILAnim.SetBool("FIL_moveForward", false);
         FILAnim.SetBool("FIL_moveBack", false);
@@ -244,12 +211,14 @@ public class FIL_Fight_Logic : MonoBehaviour
 
     private void moveForward()
     {
+        Idle();
         FILAnim.SetBool("FIL_moveForward", true);
         FILBody.velocity = new Vector2(-FILMoveSpeed, FILBody.velocity.y);
     }
 
     private void moveBackward()
     {
+        Idle();
         FILAnim.SetBool("FIL_moveBack", true);
         FILBody.velocity = new Vector2(FILMoveSpeed, FILBody.velocity.y);
     }
@@ -331,5 +300,275 @@ public class FIL_Fight_Logic : MonoBehaviour
     public void ResetDamageMultiplier()
     {
         currentDamageMultiplier = 1f;
+    }
+
+    /************************************************************
+     * BasicFighting
+     ************************************************************
+     * Description: This function will control the movement and
+     * the punches that the FIL throw. 
+     ************************************************************
+     * Parameters: 
+     * fianceDistance - This function controls the FIL's Basic 
+    * fighting logic. The FIL will move toward the target, throw 
+    * a punch, and retreat. The behavior cycles through states 
+    * for a dynamic and strategic engagement.
+     ************************************************************
+     * Returns: None
+     ************************************************************/
+    public void BasicFighting(float fianceDistance)
+    {
+        // Transition logic
+        switch (currentState)
+        {
+            case FILState.Idle:
+                Idle();
+
+                //Debug.Log("FIL is Idle");
+
+                if (fianceDistance > FILReach)
+                {
+                    currentState = FILState.Approaching;
+                    stateStartTime = Time.time;
+                }
+                else
+                {
+                    currentState = FILState.Attacking;
+                    stateStartTime = Time.time;
+                }
+                break;
+
+            case FILState.Approaching:
+                moveForward();
+
+                //Debug.Log("FIL is Approaching");
+
+                if (fianceDistance <= FILReach)
+                {
+                    currentState = FILState.Attacking;
+                    stateStartTime = Time.time;
+                }
+                break;
+
+            case FILState.Attacking:
+                
+                //Debug.Log("FIL is Attacking");
+
+                // Throw a combo based on proximity
+                if (fianceDistance <= 2)
+                {
+                    currentState = FILState.Retreating;
+                }
+                else if (fianceDistance <= 2.5)
+                {
+                    Cross();
+                }
+                else if (fianceDistance <= 3.8)
+                {
+                    Jab();
+                }
+                else if (fianceDistance <= 4.5)
+                {
+                    JabCross();
+                } 
+                else if (fianceDistance >= 5)
+                {
+                    currentState = FILState.Approaching;
+                }
+
+                // Allow attacks for a short duration, then retreat
+                if (Time.time - stateStartTime > 1f) // 1 second of attacking
+                {
+                    currentState = FILState.Retreating;
+                    stateStartTime = Time.time;
+                }
+                break;
+
+            case FILState.Retreating:
+                moveBackward();
+                //Debug.Log("FIL is Retreating for " + (Time.time) + "-" + stateStartTime + " seconds");
+
+                if (Time.time - stateStartTime > 2f) // Retreat for 2 seconds, then reengage
+                {
+                    currentState = FILState.Idle;
+                    stateStartTime = Time.time;
+                }
+                break;
+        }
+
+    }
+
+    /************************************************************
+    * AdvancedFighting
+    ************************************************************
+    * Description: This function controls the FIL's advanced 
+    * fighting logic. The FIL will move toward the target, throw 
+    * a combo, and retreat. The behavior cycles through states 
+    * for a dynamic and strategic engagement.
+    ************************************************************
+    * Parameters:
+    * fianceDistance - The distance from the FIL to the fiance. 
+    * Determines whether to approach, attack, or retreat.
+    ************************************************************
+    * Returns: None
+    ************************************************************/
+    public void AdvancedFighting(float fianceDistance)
+    {
+
+        // Transition logic
+        switch (currentState)
+        {
+            case FILState.Idle:
+                Idle();
+
+                //Debug.Log("FIL is Idle");
+
+                if (fianceDistance > FILReach)
+                {
+                    currentState = FILState.Approaching;
+                    stateStartTime = Time.time;
+                }
+                else
+                {
+                    currentState = FILState.Attacking;
+                    stateStartTime = Time.time;
+                }
+                break;
+
+            case FILState.Approaching:
+                moveForward();
+
+                //Debug.Log("FIL is Approaching");
+
+                if (fianceDistance <= FILReach)
+                {
+                    currentState = FILState.Attacking;
+                    stateStartTime = Time.time;
+                }
+                break;
+
+            case FILState.Attacking:
+                
+                //Debug.Log("FIL is Attacking");
+
+                // Throw a combo based on proximity
+                if (fianceDistance <= 2)
+                {
+                    Block();
+                }
+                else if (fianceDistance <= 2.5)
+                {
+                    CrossJab();
+                }
+                else if (fianceDistance <= 3.8)
+                {
+                    JabCross();
+                }
+                else if (fianceDistance <= 4.5)
+                {
+                    Block();
+                } 
+                else if (fianceDistance >= 5)
+                {
+                    currentState = FILState.Approaching;
+                }
+
+                // Allow attacks for a short duration, then retreat
+                if (Time.time - stateStartTime > 1f) // 1 second of attacking
+                {
+                    currentState = FILState.Retreating;
+                    stateStartTime = Time.time;
+                }
+                break;
+
+            case FILState.Retreating:
+                moveBackward();
+                //Debug.Log("FIL is Retreating for " + (Time.time) + "-" + stateStartTime + " seconds");
+
+                if (Time.time - stateStartTime > 1f) // Retreat for 2 seconds, then reengage
+                {
+                    currentState = FILState.Idle;
+                    stateStartTime = Time.time;
+                }
+                break;
+        }
+    }
+
+    /************************************************************
+    * Final Stand
+    ************************************************************
+    * Description: This function controls the FIL's fighting
+    * logic for when he is very low health. Basically he will
+    * no longer retreat and will make a final stand.
+    ************************************************************
+    * Parameters:
+    * fianceDistance - The distance from the FIL to the fiance. 
+    * Determines whether to approach, attack, or retreat.
+    ************************************************************
+    * Returns: None
+    ************************************************************/
+    public void FinalStand(float fianceDistance)
+    {
+
+        // Transition logic
+        switch (currentState)
+        {
+            case FILState.Idle:
+                Idle();
+
+                //Debug.Log("FIL is Idle");
+
+                if (fianceDistance > FILReach)
+                {
+                    currentState = FILState.Approaching;
+                    stateStartTime = Time.time;
+                }
+                else
+                {
+                    currentState = FILState.Attacking;
+                    stateStartTime = Time.time;
+                }
+                break;
+
+            case FILState.Approaching:
+                moveForward();
+
+                //Debug.Log("FIL is Approaching");
+
+                if (fianceDistance <= FILReach)
+                {
+                    currentState = FILState.Attacking;
+                    stateStartTime = Time.time;
+                }
+                break;
+
+            case FILState.Attacking:
+                
+                //Debug.Log("FIL is Attacking");
+
+                // Throw a combo based on proximity
+                if (fianceDistance <= 2.5)
+                {
+                    JabCross();
+                }
+                else if (fianceDistance <= 3.8)
+                {
+                    CrossJab();
+                }
+                else if (fianceDistance <= 4.5)
+                {
+                    Block();
+                } 
+                else if (fianceDistance >= 5)
+                {
+                    currentState = FILState.Approaching;
+                }
+                break;
+
+            // We should never reach this state during the final stand
+            case FILState.Retreating:
+                currentState = FILState.Attacking;
+                break;
+        }
     }
 }

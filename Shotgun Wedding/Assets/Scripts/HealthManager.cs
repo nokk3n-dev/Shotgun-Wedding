@@ -8,11 +8,16 @@ public class HealthManager : MonoBehaviour
 {
     [SerializeField] public Image fianceHealthBar;
     [SerializeField] public Image FILHealthBar;
+    [SerializeField] public Image fianceStaminaBar;
     [SerializeField] public GameObject CoconutPowerUp;
     [SerializeField] public GameObject RumPowerUp;
 
     private float fianceCurrentHeath = 100f;
+    private float fianceMaxHealth = 100f;
     private float FILCurrentHeath = 100f;
+    private float FILMaxHealth = 100f;
+    private float fianceCurrentStamina = 100f;
+    private float fianceMaxStamina = 100f;
     
     bool powerUpSpawned = false;
 
@@ -61,6 +66,100 @@ public class HealthManager : MonoBehaviour
             FILHealthBar.fillAmount = FILCurrentHeath / 100f;
             CheckPowerUpSpawnCondition();
         }
+    }
+
+    /************************************************************
+     * FianceHeal
+     ************************************************************
+     * Description: This function will heal the fiance the amount
+     * passed in through the parameter.
+     ************************************************************
+     * Parameters: 
+     * heal - This will be how much health they gain back
+     ************************************************************
+     * Returns: None
+     ************************************************************/
+    public void FianceHeal(float heal)
+    {
+        // Adjust the health number, ensuring it doesn't exceed max health
+        fianceCurrentHeath = Mathf.Min(fianceCurrentHeath + heal, fianceMaxHealth);
+        // Fill the healthbar to the % of current health
+        fianceHealthBar.fillAmount = fianceCurrentHeath / 100f;
+    }
+
+    /************************************************************
+     * FILHeal
+     ************************************************************
+     * Description: This function will heal the FIL the amount
+     * passed in through the parameter.
+     ************************************************************
+     * Parameters: 
+     * heal - This will be how much health they gain back
+     ************************************************************
+     * Returns: None
+     ************************************************************/
+    public void FILHeal(float heal)
+    {
+        // Adjust the health ensuring it doesn't exceed max health
+        FILCurrentHeath = Mathf.Min(FILCurrentHeath + heal, FILMaxHealth);
+        // Fill the healthbar to the % of current health
+        fianceHealthBar.fillAmount = fianceCurrentHeath / 100f;
+    }
+
+    /************************************************************
+     * FianceExhaust
+     ************************************************************
+     * Description: This function will decrement the stamina 
+     * of the fiance. If the stamina drops to 0, then they will
+     * not be able to throw any punches or block until it fills
+     * back up.
+     ************************************************************
+     * Parameters: 
+     * energy - This will be how much stamina they lose
+     ************************************************************
+     * Returns: None
+     ************************************************************/
+    public void FianceExhaust(float energy)
+    {
+        fianceCurrentStamina -= energy;
+        fianceStaminaBar.fillAmount = fianceCurrentStamina / 100f;
+
+        if (fianceCurrentStamina <= 0)
+        {
+            fianceCurrentStamina = 0;
+            
+            // fiance.isExhausted = true; - Need to implement something like this
+        }
+    }
+
+    /************************************************************
+     * GetFianceHealth
+     ************************************************************
+     * Description: This helper function will return the 
+     * current health of the fiance
+     ************************************************************
+     * Parameters: None
+     ************************************************************
+     * Returns: float
+     ************************************************************/
+    public float GetFianceHealth()
+    {
+        return fianceCurrentHeath;
+    }
+
+    /************************************************************
+     * GetFILHealth
+     ************************************************************
+     * Description: This helper function will return the 
+     * current health of the FIL
+     ************************************************************
+     * Parameters: None
+     ************************************************************
+     * Returns: float
+     ************************************************************/
+    public float GetFILHealth()
+    {
+        return FILCurrentHeath;
     }
 
     private void Lose()

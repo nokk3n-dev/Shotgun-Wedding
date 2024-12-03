@@ -16,7 +16,7 @@ public class StartMenu : MonoBehaviour
             AudioListener.volume = PlayerPrefs.GetFloat("musicVolume");
         }
 
-        if (PlayerPrefs.HasKey("savedLevel"))
+        if (PlayerPrefs.HasKey("savedLevel") && LoadGameButton != null)
         {
             LoadGameButton.interactable = true;
         }
